@@ -36,3 +36,7 @@ import machineid
 print(machine.hashed_id('myappid'))
 print(machine.hashed_id())
 ```
+
+## Thanks
+
+Special thanks to Denis Brodbeck for his Go package, [`machineid`](https://github.com/denisbrodbeck/machineid).
