@@ -26,13 +26,12 @@ __version__ = '0.1.0'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
-from winregistry import WinRegistry
 from sys import platform
 import subprocess
 import hashlib
 import hmac
 
-def __exec__(cmd: str) -> str | None:
+def __exec__(cmd: str) -> str:
   try:
     return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8") \
                      .stdout \
@@ -40,15 +39,17 @@ def __exec__(cmd: str) -> str | None:
   except:
     return None
 
-def __read__(path: str) -> str | None:
+def __read__(path: str) -> str:
   try:
     with open(path) as f:
       return f.read()
   except:
     return None
 
-def __reg__(registry: str, key: str) -> str | None:
+def __reg__(registry: str, key: str) -> str:
   try:
+    from winregistry import WinRegistry
+
     with WinRegistry() as reg:
       return reg.read_entry(registry, key) \
                 .value \
