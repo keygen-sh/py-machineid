@@ -13,6 +13,7 @@ setup(
   author='Zeke Gabrielse',
   author_email='oss@keygen.sh',
   license='MIT',
+  install_requires=['winregistry'],
   packages=['machineid'],
   classifiers=[
     'Programming Language :: Python :: 3',

@@ -26,41 +26,60 @@ __version__ = '0.1.0'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
+from winregistry import WinRegistry
 from sys import platform
 import subprocess
 import hashlib
 import hmac
 
-def __run__(cmd: str) -> str:
-  return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8") \
-                   .stdout \
-                   .strip()
+def __exec__(cmd: str) -> str | None:
+  try:
+    return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8") \
+                     .stdout \
+                     .strip()
+  except:
+    return None
+
+def __read__(path: str) -> str | None:
+  try:
+    with open(path) as f:
+      return f.read()
+  except:
+    return None
+
+def __reg__(registry: str, key: str) -> str | None:
+  try:
+    with WinRegistry() as reg:
+      return reg.read_entry(registry, key) \
+                .value \
+                .strip()
+  except:
+    return None
 
 def id() -> str:
   """
   id returns the platform specific device GUID of the current host OS.
   """
-
-  id = ''
-
   if platform == 'darwin':
-    id = __run__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
+    id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
 
   if platform == 'win32' or platform == 'cygwin' or platform == 'msys':
-    id = __run__('wmic csproduct get uuid').split('\n')[1] \
-                                           .strip()
+    id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsft\Cryptography', 'MachineGuid')
+    if not id:
+      id = __exec__('wmic csproduct get uuid').split('\n')[2] \
+                                              .strip()
 
   if platform.startswith('linux'):
-    id = __run__('cat /var/lib/dbus/machine-id')
-    if id == '':
-      id = __run__('cat /etc/machine-id')
+    id = __read__('/var/lib/dbus/machine-id')
+    if not id:
+      id = __read__('/etc/machine-id')
 
   if platform.startswith('openbsd') or platform.startswith('freebsd'):
-    id = __run__('cat /etc/hostid')
-    if id == '':
-      id = __run__('kenv -q smbios.system.uuid')
+    id = __read__('/etc/hostid')
+    if not id:
+      id = __exec__('kenv -q smbios.system.uuid')
 
-  if id == '':
+  if not id:
     raise Exception('failed to obtain id on platform {}'.format(platform))
 
   return id
