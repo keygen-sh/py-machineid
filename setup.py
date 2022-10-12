@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
   name='py-machineid',
-  version='0.2.0',
+  version='0.2.1',
   description='Get the unique machine ID of any host (without admin privileges)',
   long_description_content_type='text/markdown',
   long_description=readme,
