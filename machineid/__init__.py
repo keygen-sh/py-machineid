@@ -65,7 +65,7 @@ def id() -> str:
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
 
   if platform == 'win32' or platform == 'cygwin' or platform == 'msys':
-    id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsft\Cryptography', 'MachineGuid')
+    id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     if not id:
       id = __exec__('wmic csproduct get uuid').split('\n')[2] \
                                               .strip()
