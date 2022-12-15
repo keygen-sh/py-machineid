@@ -33,8 +33,8 @@ which will ensure a unique ID per-app for the same device.
 ```python
 import machineid
 
-print(machine.hashed_id('myappid'))
-print(machine.hashed_id())
+print(machineid.hashed_id('myappid'))
+print(machineid.hashed_id())
 ```
 
 ## Thanks
