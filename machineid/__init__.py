@@ -74,6 +74,8 @@ def id() -> str:
     id = __read__('/var/lib/dbus/machine-id')
     if not id:
       id = __read__('/etc/machine-id')
+    if not id:
+      id = __read__('/sys/class/net/eth0/address')
 
   if platform.startswith('openbsd') or platform.startswith('freebsd'):
     id = __read__('/etc/hostid')
