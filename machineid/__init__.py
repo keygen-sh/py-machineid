@@ -76,12 +76,14 @@ def id() -> str:
       id = __read__('/etc/machine-id')
     if not id:
       cgroup = __read__('/proc/self/cgroup')
-      if 'docker' in cgroup:
-        id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
+      if cgroup:
+        if 'docker' in cgroup:
+          id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
     if not id:
       mountinfo = __read__('/proc/self/mountinfo')
-      if 'docker' in mountinfo:
-        id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
+      if mountinfo:
+        if 'docker' in mountinfo:
+          id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
 
   if platform.startswith('openbsd') or platform.startswith('freebsd'):
     id = __read__('/etc/hostid')
