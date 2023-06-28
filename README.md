@@ -4,9 +4,13 @@ Get the unique machine ID of any host (without admin privileges).
 
 Sponsored by:
 
-[![Keygen logo](https://user-images.githubusercontent.com/6979737/175406169-bd8bf064-7343-4bd1-94b7-a773ecec07b8.png)](https://keygen.sh)
+<a href="https://keygen.sh?ref=typed_params">
+  <div>
+    <img src="https://keygen.sh/images/logo-pill.png" width="200" alt="Keygen">
+  </div>
+</a>
 
-_A software licensing and distribution API built for developers._
+_An open, source-available software licensing and distribution API._
 
 ## Install
 
