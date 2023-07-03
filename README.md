@@ -1,5 +1,8 @@
 # py-machineid
 
+[![CI](https://github.com/keygen-sh/py-machineid/actions/workflows/test.yml/badge.svg)](https://github.com/keygen-sh/py-machineid/actions)
+[![PyPI version](https://badge.fury.io/py/py-machineid.svg)](https://badge.fury.io/py/py-machineid)
+
 Get the unique machine ID of any host (without admin privileges).
 
 Sponsored by:
