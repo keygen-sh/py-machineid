@@ -26,6 +26,7 @@ __version__ = '0.2.1'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
+from platform import uname
 from sys import platform
 import subprocess
 import hashlib
@@ -33,7 +34,7 @@ import hmac
 
 def __exec__(cmd: str) -> str:
   try:
-    return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8") \
+    return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding='utf-8') \
                      .stdout \
                      .strip()
   except:
@@ -67,6 +68,8 @@ def id() -> str:
   if platform == 'win32' or platform == 'cygwin' or platform == 'msys':
     id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     if not id:
+      id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
+    if not id:
       id = __exec__('wmic csproduct get uuid').split('\n')[2] \
                                               .strip()
 
@@ -84,6 +87,9 @@ def id() -> str:
       if mountinfo:
         if 'docker' in mountinfo:
           id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
+    if not id:
+      if 'microsoft' in uname().release: # wsl
+        id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
 
   if platform.startswith('openbsd') or platform.startswith('freebsd'):
     id = __read__('/etc/hostid')
