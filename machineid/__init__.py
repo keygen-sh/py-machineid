@@ -69,7 +69,7 @@ def id(winregistry: bool = True) -> str:
     if winregistry:
       id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     else:
-      id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
+      id = __exec__("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID")
     if not id:
       id = __exec__('wmic csproduct get uuid').split('\n')[2] \
                                               .strip()
