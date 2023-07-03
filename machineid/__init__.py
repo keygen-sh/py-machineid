@@ -58,7 +58,7 @@ def __reg__(registry: str, key: str) -> str:
   except:
     return None
 
-def id() -> str:
+def id(winregistry: bool = True) -> str:
   """
   id returns the platform specific device GUID of the current host OS.
   """
@@ -66,8 +66,9 @@ def id() -> str:
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
 
   if platform == 'win32' or platform == 'cygwin' or platform == 'msys':
-    id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
-    if not id:
+    if winregistry:
+      id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
+    else:
       id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
     if not id:
       id = __exec__('wmic csproduct get uuid').split('\n')[2] \
@@ -101,9 +102,9 @@ def id() -> str:
 
   return id
 
-def hashed_id(app_id: str = '') -> str:
+def hashed_id(app_id: str = '', **kwargs) -> str:
   """
   hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with an optional application ID.
   """
 
-  return hmac.new(bytes(app_id.encode()), id().encode(), hashlib.sha256).hexdigest()
+  return hmac.new(bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256).hexdigest()
