@@ -16,6 +16,9 @@ setup(
   license='MIT',
   install_requires=['winregistry; sys_platform == "win32"'],
   packages=['machineid'],
+  package_data={
+    'machineid': ['py.typed'],
+  },
   classifiers=[
     'Programming Language :: Python :: 3',
     'License :: OSI Approved :: MIT License',

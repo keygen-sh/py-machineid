@@ -22,7 +22,7 @@ Special thanks to Denis Brodbeck for his Go package, machineid (https://github.c
 :license: MIT, see LICENSE for more details.
 """
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
@@ -62,6 +62,7 @@ def id(winregistry: bool = True) -> str:
   """
   id returns the platform specific device GUID of the current host OS.
   """
+
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
   elif platform == 'win32' or platform == 'cygwin' or platform == 'msys':
