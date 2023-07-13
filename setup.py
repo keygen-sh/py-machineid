@@ -1,3 +1,4 @@
+from machineid import __version__, __author__
 from setuptools import setup
 
 with open("README.md", "r") as fh:
@@ -5,15 +6,15 @@ with open("README.md", "r") as fh:
 
 setup(
   name='py-machineid',
-  version='0.4.1',
+  version=__version__,
   description='Get the unique machine ID of any host (without admin privileges)',
   long_description_content_type='text/markdown',
   long_description=readme,
   url='https://github.com/keygen-sh/py-machineid',
-  author='Zeke Gabrielse',
+  author=__author__,
   author_email='oss@keygen.sh',
   license='MIT',
-  install_requires=['winregistry'],
+  install_requires=['winregistry; sys_platform == "win32"'],
   packages=['machineid'],
   classifiers=[
     'Programming Language :: Python :: 3',
