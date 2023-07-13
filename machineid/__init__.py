@@ -64,8 +64,7 @@ def id(winregistry: bool = True) -> str:
   """
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
-
-  if platform == 'win32' or platform == 'cygwin' or platform == 'msys':
+  elif platform == 'win32' or platform == 'cygwin' or platform == 'msys':
     if winregistry:
       id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     else:
@@ -73,8 +72,7 @@ def id(winregistry: bool = True) -> str:
     if not id:
       id = __exec__('wmic csproduct get uuid').split('\n')[2] \
                                               .strip()
-
-  if platform.startswith('linux'):
+  elif platform.startswith('linux'):
     id = __read__('/var/lib/dbus/machine-id')
     if not id:
       id = __read__('/etc/machine-id')
@@ -91,8 +89,7 @@ def id(winregistry: bool = True) -> str:
     if not id:
       if 'microsoft' in uname().release: # wsl
         id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
-
-  if platform.startswith('openbsd') or platform.startswith('freebsd'):
+  elif platform.startswith('openbsd') or platform.startswith('freebsd'):
     id = __read__('/etc/hostid')
     if not id:
       id = __exec__('kenv -q smbios.system.uuid')
