@@ -22,87 +22,105 @@ Special thanks to Denis Brodbeck for his Go package, machineid (https://github.c
 :license: MIT, see LICENSE for more details.
 """
 
-__version__ = '0.4.3'
-__author__  = 'Zeke Gabrielse'
-__credits__ = 'https://github.com/denisbrodbeck/machineid'
+__version__ = "0.4.3"
+__author__ = "Zeke Gabrielse"
+__credits__ = "https://github.com/denisbrodbeck/machineid"
 
-from platform import uname
-from sys import platform
-import subprocess
 import hashlib
 import hmac
+import subprocess
+from platform import uname
+from sys import platform
+from uuid import UUID
+
 
 def __exec__(cmd: str) -> str:
-  try:
-    return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding='utf-8') \
-                     .stdout \
-                     .strip()
-  except:
-    return None
+    try:
+        return subprocess.run(
+            cmd, shell=True, capture_output=True, check=True, encoding="utf-8"
+        ).stdout.strip()
+    except:
+        return None
+
 
 def __read__(path: str) -> str:
-  try:
-    with open(path) as f:
-      return f.read()
-  except:
-    return None
+    try:
+        with open(path) as f:
+            return f.read()
+    except:
+        return None
+
 
 def __reg__(registry: str, key: str) -> str:
-  try:
-    from winregistry import WinRegistry
+    try:
+        from winregistry import WinRegistry
 
-    with WinRegistry() as reg:
-      return reg.read_entry(registry, key) \
-                .value \
-                .strip()
-  except:
-    return None
+        with WinRegistry() as reg:
+            return reg.read_entry(registry, key).value.strip()
+    except:
+        return None
+
 
 def id(winregistry: bool = True) -> str:
-  """
-  id returns the platform specific device GUID of the current host OS.
-  """
+    """
+    id returns the platform specific device GUID of the current host OS.
+    """
 
-  if platform == 'darwin':
-    id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
-  elif platform == 'win32' or platform == 'cygwin' or platform == 'msys':
-    if winregistry:
-      id = __reg__('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
-    else:
-      id = __exec__("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID")
-    if not id:
-      id = __exec__('wmic csproduct get uuid').split('\n')[2] \
-                                              .strip()
-  elif platform.startswith('linux'):
-    id = __read__('/var/lib/dbus/machine-id')
-    if not id:
-      id = __read__('/etc/machine-id')
-    if not id:
-      cgroup = __read__('/proc/self/cgroup')
-      if cgroup:
-        if 'docker' in cgroup:
-          id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
-    if not id:
-      mountinfo = __read__('/proc/self/mountinfo')
-      if mountinfo:
-        if 'docker' in mountinfo:
-          id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
-    if not id:
-      if 'microsoft' in uname().release: # wsl
-        id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
-  elif platform.startswith('openbsd') or platform.startswith('freebsd'):
-    id = __read__('/etc/hostid')
-    if not id:
-      id = __exec__('kenv -q smbios.system.uuid')
+    if platform == "darwin":
+        id = __exec__(
+            "ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'"
+        )
+    elif platform == "win32" or platform == "cygwin" or platform == "msys":
+        if winregistry:
+            id = __reg__(
+                "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography", "MachineGuid"
+            )
+        else:
+            id = __exec__(
+                "powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID"
+            )
+        if not id:
+            id = __exec__("wmic csproduct get uuid").split("\n")[2].strip()
+    elif platform.startswith("linux"):
+        id = __read__("/var/lib/dbus/machine-id")
+        if not id:
+            id = __read__("/etc/machine-id")
+        if not id:
+            cgroup = __read__("/proc/self/cgroup")
+            if cgroup:
+                if "docker" in cgroup:
+                    id = __exec__("head -1 /proc/self/cgroup | cut -d/ -f3")
+        if not id:
+            mountinfo = __read__("/proc/self/mountinfo")
+            if mountinfo:
+                if "docker" in mountinfo:
+                    id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
+        if not id:
+            if "microsoft" in uname().release:  # wsl
+                id = __exec__(
+                    "powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'"
+                )
+    elif platform.startswith("openbsd") or platform.startswith("freebsd"):
+        id = __read__("/etc/hostid")
+        if not id:
+            id = __exec__("kenv -q smbios.system.uuid")
 
-  if not id:
-    raise Exception('failed to obtain id on platform {}'.format(platform))
+    if not id:
+        raise Exception("failed to obtain id on platform {}".format(platform))
 
-  return id
+    return id
 
-def hashed_id(app_id: str = '', **kwargs) -> str:
-  """
-  hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with an optional application ID.
-  """
 
-  return hmac.new(bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256).hexdigest()
+def hashed_id(app_id: str = "", **kwargs) -> str:
+    """
+    hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with an optional application ID.
+    """
+
+    return hmac.new(
+        bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256
+    ).hexdigest()
+
+
+def uuid_formatted_id() -> str:
+    mykdf = hashlib.pbkdf2_hmac("sha256", id().encode("utf-8"), b"", 10**6, dklen=16)
+    return str(UUID(bytes=mykdf)).upper()
