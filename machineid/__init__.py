@@ -17,6 +17,11 @@ You can anonymize the ID like so, with an optional app ID:
     >>> machine.hashed_id()
     ce2127ade536eaa9529f4a7b73141bbc2f094c46e32742c97679e186e7f13fde
 
+You can also format the machine ID for consistency across platforms using this method:
+    >>> import machineid
+    >>> machineid.uuid_formatted_id()
+    DA21FFE3-A1F4-CC23-861F-9B29B2BF2F56
+
 Special thanks to Denis Brodbeck for his Go package, machineid (https://github.com/denisbrodbeck/machineid).
 
 :license: MIT, see LICENSE for more details.
@@ -123,7 +128,7 @@ def hashed_id(app_id: str = "", **kwargs) -> str:
 
 def uuid_formatted_id() -> str:
     """
-    uuid_formatted_id returns a UUID-compliant machineid
+    uuid_formatted_id returns cross-platform machineid
     """
     mykdf = hashlib.pbkdf2_hmac("sha256", id().encode("utf-8"), b"", 10**6, dklen=16)
     return str(UUID(bytes=mykdf)).upper()
