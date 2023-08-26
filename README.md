@@ -44,6 +44,14 @@ print(machineid.hashed_id('myappid'))
 print(machineid.hashed_id())
 ```
 
+To obtain the machine ID for consistency across platforms, use `uuid_formatted_id() -> str`
+
+```python
+import machineid
+
+print(machineid.uuid_formatted_id())
+```
+
 ## Thanks
 
 Special thanks to Denis Brodbeck for his Go package, [`machineid`](https://github.com/denisbrodbeck/machineid).
