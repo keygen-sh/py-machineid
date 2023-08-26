@@ -122,5 +122,8 @@ def hashed_id(app_id: str = "", **kwargs) -> str:
 
 
 def uuid_formatted_id() -> str:
+    """
+    uuid_formatted_id returns a UUID-compliant machineid
+    """
     mykdf = hashlib.pbkdf2_hmac("sha256", id().encode("utf-8"), b"", 10**6, dklen=16)
     return str(UUID(bytes=mykdf)).upper()
