@@ -86,7 +86,9 @@ def id(winregistry: bool = True) -> str:
       mountinfo = __read__('/proc/self/mountinfo')
       if mountinfo:
         if 'docker' in mountinfo:
-          id = __exec__("grep 'systemd' /proc/self/mountinfo | cut -d/ -f3")
+          id = __exec__("grep '/data/docker/containers' /proc/self/mountinfo | cut -d/ -f5")
+          if not id:
+            id = __exec__("grep '/var/lib/docker/containers' /proc/self/mountinfo | cut -d/ -f6")
     if not id:
       if 'microsoft' in uname().release: # wsl
         id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")

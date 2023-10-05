@@ -44,6 +44,14 @@ print(machineid.hashed_id('myappid'))
 print(machineid.hashed_id())
 ```
 
+## Testing
+
+To run tests, invoke `unittest`:
+
+```bash
+python3 -m unittest
+```
+
 ## Thanks
 
 Special thanks to Denis Brodbeck for his Go package, [`machineid`](https://github.com/denisbrodbeck/machineid).
