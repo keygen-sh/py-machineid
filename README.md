@@ -44,6 +44,12 @@ print(machineid.hashed_id('myappid'))
 print(machineid.hashed_id())
 ```
 
+Both `id()` and `hashed_id()` accept a `winregistry: bool` kwarg,
+which can be used to disable the registry query on Windows (enabled
+by default). Depending on your security posture, disabling the
+registry query may help prevent machine fingerprints from
+being manually modified by a bad actor.
+
 ## Testing
 
 To run tests, invoke `unittest`:
