@@ -12,9 +12,9 @@ Basic usage:
 
 You can anonymize the ID like so, with an optional app ID:
 
-    >>> machine.hashed_id('myappid')
+    >>> machineid.hashed_id('myappid')
     366048092ef4e7db53cd7adec82dcab15ab67ac2a6b234dc6a69303a4dd48e83
-    >>> machine.hashed_id()
+    >>> machineid.hashed_id()
     ce2127ade536eaa9529f4a7b73141bbc2f094c46e32742c97679e186e7f13fde
 
 Special thanks to Denis Brodbeck for his Go package, machineid (https://github.com/denisbrodbeck/machineid).
