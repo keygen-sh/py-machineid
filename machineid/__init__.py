@@ -79,17 +79,14 @@ def id(winregistry: bool = True) -> str:
       id = __read__('/etc/machine-id')
     if not id:
       cgroup = __read__('/proc/self/cgroup')
-      if cgroup:
-        if 'docker' in cgroup:
-          id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
+      if cgroup and 'docker' in cgroup:
+        id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
     if not id:
       mountinfo = __read__('/proc/self/mountinfo')
-      if mountinfo:
-        if 'docker' in mountinfo:
-          id = __exec__("grep -oP '(?<=docker/containers/)([a-f0-9]+)(?=/hostname)' /proc/self/mountinfo")
-    if not id:
-      if 'microsoft' in uname().release: # wsl
-        id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
+      if mountinfo and 'docker' in mountinfo:
+        id = __exec__("grep -oP '(?<=docker/containers/)([a-f0-9]+)(?=/hostname)' /proc/self/mountinfo")
+    if not id and 'microsoft' in uname().release: # wsl
+      id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
   elif platform.startswith('openbsd') or platform.startswith('freebsd'):
     id = __read__('/etc/hostid')
     if not id:
