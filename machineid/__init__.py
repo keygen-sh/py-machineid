@@ -65,7 +65,7 @@ def id(winregistry: bool = True) -> str:
   id = None
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
-  elif platform == 'win32' or platform == 'cygwin' or platform == 'msys':
+  elif platform in ('win32', 'cygwin', 'msys'):
     if winregistry:
       id = __reg__(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     else:
