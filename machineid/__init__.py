@@ -31,6 +31,7 @@ from sys import platform
 import subprocess
 import hashlib
 import hmac
+import re
 
 def __exec__(cmd: str) -> str:
   try:
@@ -95,7 +96,8 @@ def id(winregistry: bool = True) -> str:
   if not id:
     raise Exception('failed to obtain id on platform {}'.format(platform))
 
-  return id
+  # Make sure we always return a single line without control characters
+  return re.sub(r"[\x00-\x1f\x7f-\x9f]", "", str(id).split('\n')[0])
 
 def hashed_id(app_id: str = '', **kwargs) -> str:
   """
