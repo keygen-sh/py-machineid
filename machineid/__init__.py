@@ -30,6 +30,7 @@ from platform import uname
 from sys import platform
 import subprocess
 import hashlib
+from uuid import UUID
 import hmac
 
 def __exec__(cmd: str) -> str:
@@ -103,3 +104,13 @@ def hashed_id(app_id: str = '', **kwargs) -> str:
   """
 
   return hmac.new(bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256).hexdigest()
+
+def uuid(**kwargs) -> UUID:
+  machine_id = id(**kwargs)
+  try:
+    return UUID(hex=machine_id)
+  except (AttributeError, ValueError):
+    # If id is not a hexadecimal UUID representation, that make it one
+    return UUID(hex=machine_id[:16].encode('utf-8').ljust(16).hex())
+
+    
