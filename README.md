@@ -58,6 +58,22 @@ To run tests, invoke `unittest`:
 python3 -m unittest
 ```
 
+## Building
+
+To build a release, run:
+
+```bash
+python3 setup.py sdist bdist_wheel
+```
+
+## Publishing
+
+To publish a release, run:
+
+```bash
+twine upload dist/*
+```
+
 ## Thanks
 
 Special thanks to Denis Brodbeck for his Go package, [`machineid`](https://github.com/denisbrodbeck/machineid).
