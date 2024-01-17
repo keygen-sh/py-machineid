@@ -43,7 +43,8 @@ def __exec__(cmd: str) -> str:
 def __read__(path: str) -> str:
   try:
     with open(path) as f:
-      return f.read()
+      return f.read() \
+              .strip()
   except:
     return None
 
