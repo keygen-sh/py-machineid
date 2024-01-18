@@ -34,7 +34,7 @@ import hmac
 import re
 
 def __sanitize__(id: str) -> str:
-  return re.sub(r'[\x00-\x1f\x7f-\x9f\r\n\t\s]', '', id) \
+  return re.sub(r'[\x00-\x1f\x7f-\x9f\s]', '', id) \
            .strip()
 
 def __exec__(cmd: str) -> str:
