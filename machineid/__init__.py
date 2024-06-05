@@ -26,12 +26,30 @@ __version__ = '0.5.1'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
-from platform import uname
-from sys import platform
-import subprocess
 import hashlib
 import hmac
 import re
+import subprocess
+from logging import getLogger
+from platform import uname
+from sys import platform
+
+log = getLogger(__name__)
+
+try:
+  from winregistry import WinRegistry
+except ImportError:
+  log.debug("winregistry not available.")
+  WinRegistry = None
+
+
+
+class MachineIdNotFound(RuntimeError):
+  """
+  Raised when this library is unable to
+  determine the machine id for the system
+  where it is running.
+  """
 
 def __sanitize__(id: str) -> str:
   return re.sub(r'[\x00-\x1f\x7f-\x9f\s]', '', id) \
@@ -42,7 +60,8 @@ def __exec__(cmd: str) -> str:
     return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding='utf-8') \
                      .stdout \
                      .strip()
-  except:
+  except subprocess.SubprocessError as err:
+    log.debug(err)
     return None
 
 def __read__(path: str) -> str:
@@ -50,18 +69,18 @@ def __read__(path: str) -> str:
     with open(path) as f:
       return f.read() \
               .strip()
-  except:
+  except IOError as err:
+    log.debug(err)
     return None
 
 def __reg__(registry: str, key: str) -> str:
   try:
-    from winregistry import WinRegistry
-
     with WinRegistry() as reg:
       return reg.read_entry(registry, key) \
                 .value \
                 .strip()
-  except:
+  except OSError as err:
+    log.debug(err)
     return None
 
 def id(winregistry: bool = True) -> str:
@@ -72,7 +91,7 @@ def id(winregistry: bool = True) -> str:
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
   elif platform in ('win32', 'cygwin', 'msys'):
-    if winregistry:
+    if winregistry and WinRegistry is not None:
       id = __reg__(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     else:
       id = __exec__("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID")
@@ -99,7 +118,7 @@ def id(winregistry: bool = True) -> str:
       id = __exec__('kenv -q smbios.system.uuid')
 
   if not id:
-    raise Exception('failed to obtain id on platform {}'.format(platform))
+    raise MachineIdNotFound('failed to obtain id on platform {}'.format(platform))
 
   return __sanitize__(id)
 
