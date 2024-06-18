@@ -7,7 +7,7 @@ Get the unique machine ID of any host (without admin privileges).
 
 Sponsored by:
 
-<a href="https://keygen.sh?ref=typed_params">
+<a href="https://keygen.sh?ref=py-machineid">
   <div>
     <img src="https://keygen.sh/images/logo-pill.png" width="200" alt="Keygen">
   </div>
