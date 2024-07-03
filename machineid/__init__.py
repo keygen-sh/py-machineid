@@ -30,16 +30,12 @@ import hashlib
 import hmac
 import re
 import subprocess
-from logging import getLogger
 from platform import uname
 from sys import platform
-
-log = getLogger(__name__)
 
 try:
   from winregistry import WinRegistry
 except ImportError:
-  log.debug("winregistry not available.")
   WinRegistry = None
 
 
@@ -60,8 +56,7 @@ def __exec__(cmd: str) -> str:
     return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding='utf-8') \
                      .stdout \
                      .strip()
-  except subprocess.SubprocessError as err:
-    log.debug(err)
+  except subprocess.SubprocessError:
     return None
 
 def __read__(path: str) -> str:
@@ -69,8 +64,7 @@ def __read__(path: str) -> str:
     with open(path) as f:
       return f.read() \
               .strip()
-  except IOError as err:
-    log.debug(err)
+  except IOError:
     return None
 
 def __reg__(registry: str, key: str) -> str:
@@ -79,8 +73,7 @@ def __reg__(registry: str, key: str) -> str:
       return reg.read_entry(registry, key) \
                 .value \
                 .strip()
-  except OSError as err:
-    log.debug(err)
+  except OSError:
     return None
 
 def id(winregistry: bool = True) -> str:
