@@ -22,7 +22,7 @@ Special thanks to Denis Brodbeck for his Go package, machineid (https://github.c
 :license: MIT, see LICENSE for more details.
 """
 
-__version__ = '0.5.1'
+__version__ = '0.6.0'
 __author__  = 'Zeke Gabrielse'
 __credits__ = 'https://github.com/denisbrodbeck/machineid'
 
