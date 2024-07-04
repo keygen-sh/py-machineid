@@ -38,13 +38,10 @@ try:
 except ImportError:
   WinRegistry = None
 
-
-
 class MachineIdNotFound(RuntimeError):
   """
-  Raised when this library is unable to
-  determine the machine id for the system
-  where it is running.
+  Raised when this library is unable to determine the machine id for the
+  system where it is running.
   """
 
 def __sanitize__(id: str) -> str:
@@ -80,6 +77,7 @@ def id(winregistry: bool = True) -> str:
   """
   id returns the platform specific device GUID of the current host OS.
   """
+
   id = None
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
@@ -117,7 +115,8 @@ def id(winregistry: bool = True) -> str:
 
 def hashed_id(app_id: str = '', **kwargs) -> str:
   """
-  hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with an optional application ID.
+  hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with
+  an optional application ID.
   """
 
   return hmac.new(bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256).hexdigest()
