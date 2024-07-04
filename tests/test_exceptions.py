@@ -3,12 +3,9 @@ from unittest.mock import Mock, patch
 
 import machineid
 
-
 RETURNS_NONE = Mock(return_value=None)
 
-
 class TestExceptionsHandling(unittest.TestCase):
-
   @patch.multiple(
     'machineid',
     __exec__=RETURNS_NONE,
