@@ -14,7 +14,7 @@ setup(
   author=__author__,
   author_email='oss@keygen.sh',
   license='MIT',
-  install_requires=['winregistry; sys_platform == "win32"'],
+  install_requires=['winregistry>=2.0.1,<3.0.0; sys_platform == "win32"'],
   packages=['machineid'],
   package_data={
     'machineid': ['py.typed'],

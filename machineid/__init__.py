@@ -34,9 +34,9 @@ from platform import uname
 from sys import platform
 
 try:
-  from winregistry import WinRegistry
+  import winregistry as winregistry_lib
 except ImportError:
-  WinRegistry = None
+  winregistry_lib = None
 
 class MachineIdNotFound(RuntimeError):
   """
@@ -64,14 +64,16 @@ def __read__(path: str) -> str:
   except IOError:
     return None
 
-def __reg__(registry: str, key: str) -> str:
-  try:
-    with WinRegistry() as reg:
-      return reg.read_entry(registry, key) \
-                .value \
-                .strip()
-  except OSError:
+def __reg__(key_name: str, value_name: str) -> str:
+  if winregistry_lib is None:
     return None
+  try:
+    with winregistry_lib.open_value(key_name, value_name) as reg:
+      if reg.data and isinstance(reg.data, str):
+        return reg.data.strip()
+  except OSError:
+    pass
+  return None
 
 def id(winregistry: bool = True) -> str:
   """
@@ -82,7 +84,7 @@ def id(winregistry: bool = True) -> str:
   if platform == 'darwin':
     id = __exec__("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'")
   elif platform in ('win32', 'cygwin', 'msys'):
-    if winregistry and WinRegistry is not None:
+    if winregistry:
       id = __reg__(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography', 'MachineGuid')
     else:
       id = __exec__("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID")
