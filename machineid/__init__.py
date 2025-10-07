@@ -89,8 +89,10 @@ def id(winregistry: bool = True) -> str:
     if not id:
       id = __exec__("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID")
     if not id:
-      id = __exec__('wmic csproduct get uuid').split('\n')[2] \
-                                              .strip()
+      id_temp = __exec__('wmic csproduct get uuid')
+      if id_temp is not None:
+          id = id_temp.split('\n')[2].strip()
+          
   elif platform.startswith('linux'):
     id = __read__('/var/lib/dbus/machine-id')
     if not id:
