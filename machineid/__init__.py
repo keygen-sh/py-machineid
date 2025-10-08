@@ -91,8 +91,7 @@ def id(winregistry: bool = True) -> str:
     if not id:
       out = __exec__('wmic csproduct get uuid')
       if out is not None and out.count('\n')>1:
-          id = out.split('\n')[2].strip()
-          
+        id = out.split('\n')[2].strip()
   elif platform.startswith('linux'):
     id = __read__('/var/lib/dbus/machine-id')
     if not id:
