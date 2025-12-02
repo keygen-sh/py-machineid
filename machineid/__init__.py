@@ -118,8 +118,8 @@ def id(winregistry: bool = True) -> str:
 
 def hashed_id(app_id: str = '', **kwargs) -> str:
   """
-  hashed_id returns the device's native GUID, hashed using HMAC-SHA256 with
-  an optional application ID.
+  hashed_id returns the device's native GUID, which calculates the HMAC-SHA256 of the
+  app ID, keyed by the underlying machine ID.
   """
 
-  return hmac.new(bytes(app_id.encode()), id(**kwargs).encode(), hashlib.sha256).hexdigest()
+  return hmac.new(id(**kwargs).encode(), bytes(app_id.encode()), hashlib.sha256).hexdigest()
