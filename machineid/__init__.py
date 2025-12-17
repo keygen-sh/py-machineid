@@ -104,6 +104,8 @@ def id(winregistry: bool = True) -> str:
       mountinfo = __read__('/proc/self/mountinfo')
       if mountinfo and 'docker' in mountinfo:
         id = __exec__("grep -oP '(?<=docker/containers/)([a-f0-9]+)(?=/hostname)' /proc/self/mountinfo")
+    if not id:  # when running with kubernetes it returns the pod id
+        id = __read__('/etc/hostname')
     if not id and 'microsoft' in uname().release: # wsl
       id = __exec__("powershell.exe -ExecutionPolicy bypass -command '(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID'")
   elif platform.startswith(('openbsd', 'freebsd')):
